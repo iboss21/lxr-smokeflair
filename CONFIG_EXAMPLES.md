@@ -1,14 +1,16 @@
-# Configuration Examples
+# Configuration Examples for RedM
 
-This file contains example configurations for different server setups.
+This file contains example configurations for different RedM server setups.
+
+**IMPORTANT**: This resource is designed for RedM ONLY. All configurations use RedM-specific resources.
 
 ## Table of Contents
 - [LXRCore Setup (Recommended)](#lxrcore-setup-recommended)
 - [RSGCore Setup](#rsgcore-setup)
-- [QBCore Setup](#qbcore-setup)
-- [ESX Setup](#esx-setup)
 - [VORP Setup](#vorp-setup)
+- [RedEM Setup](#redem-setup)
 - [Standalone Setup](#standalone-setup)
+- [Discord Webhook Configuration](#discord-webhook-configuration)
 - [Custom Notification Systems](#custom-notification-systems)
 - [Performance Optimized Setup](#performance-optimized-setup)
 - [Roleplay Focused Setup](#roleplay-focused-setup)
@@ -17,13 +19,13 @@ This file contains example configurations for different server setups.
 
 ## LXRCore Setup (Recommended)
 
-**Perfect for The Land of Wolves RP servers running LXRCore**
+**Perfect for The Land of Wolves RP servers running LXRCore on RedM**
 
 ```lua
 -- Framework
 Config.Framework = 'lxr-core'
 
--- Notification System
+-- Notification System (bln_notify recommended)
 Config.NotifyType = 'bln_notify'
 Config.CustomNotifyResource = 'bln_notify'
 
@@ -37,9 +39,20 @@ Config.ProgressbarDuration = 5000
 Config.ProgressbarType = 'lxr-progressbar'
 Config.CustomProgressbarResource = 'lxr-progressbar'
 
--- Interaction System
-Config.InteractionType = 'co_interactions'
-Config.CustomInteractionResource = 'co_interactions'
+-- Interaction System (RCO = RedM Context Options)
+Config.InteractionType = 'rco'
+Config.CustomInteractionResource = 'rco'
+
+-- Discord Webhook
+Config.DiscordWebhook = {
+    enabled = true,
+    webhook = 'YOUR_WEBHOOK_URL_HERE',
+    botName = 'The Land of Wolves RP - Smoke Flair',
+    logDeploy = true,
+    includeSteamID = true,
+    includeDiscordID = true,
+    includeCoordinates = true,
+}
 
 -- Gameplay Settings
 Config.maxSmokes = 15
@@ -50,7 +63,7 @@ Config.maxSmokePerPlayer = 5
 
 ## RSGCore Setup
 
-**For servers using RSGCore framework**
+**For RedM servers using RSGCore framework**
 
 ```lua
 -- Framework
@@ -68,65 +81,10 @@ Config.ProgressbarDuration = 5000
 Config.ProgressbarType = 'rsg-progressbar'
 
 -- Interaction System
-Config.InteractionType = 'ox_target'
+Config.InteractionType = 'rsg-target'
 
--- Gameplay Settings
-Config.maxSmokes = 10
-Config.maxSmokePerPlayer = 3
-```
-
----
-
-## QBCore Setup
-
-**For servers using QBCore framework**
-
-```lua
--- Framework
-Config.Framework = 'qb-core'
-
--- Notification System
-Config.NotifyType = 'qb-notify'
-
--- HUD System
-Config.HudType = 'qb-hud'
-
--- Progressbar System
-Config.UseProgressbar = true
-Config.ProgressbarDuration = 5000
-Config.ProgressbarType = 'qb-progressbar'
-
--- Interaction System
-Config.InteractionType = 'qb-target'
-
--- Gameplay Settings
-Config.maxSmokes = 10
-Config.maxSmokePerPlayer = 3
-```
-
----
-
-## ESX Setup
-
-**For servers using ESX framework**
-
-```lua
--- Framework
-Config.Framework = 'esx'
-
--- Notification System
-Config.NotifyType = 'ox_lib'
-
--- HUD System
-Config.HudType = 'esx_hud'
-
--- Progressbar System
-Config.UseProgressbar = true
-Config.ProgressbarDuration = 5000
-Config.ProgressbarType = 'ox_lib'
-
--- Interaction System
-Config.InteractionType = 'ox_target'
+-- Discord Webhook (optional)
+Config.DiscordWebhook.enabled = false
 
 -- Gameplay Settings
 Config.maxSmokes = 10
@@ -137,25 +95,60 @@ Config.maxSmokePerPlayer = 3
 
 ## VORP Setup
 
-**For servers using VORP framework**
+**For RedM servers using VORP framework**
 
 ```lua
 -- Framework
 Config.Framework = 'vorp'
 
 -- Notification System
-Config.NotifyType = 'mythic_notify'
+Config.NotifyType = 'vorp_notify'
 
 -- HUD System
-Config.HudType = 'none'
+Config.HudType = 'vorp_hud'
 
 -- Progressbar System
 Config.UseProgressbar = true
 Config.ProgressbarDuration = 5000
-Config.ProgressbarType = 'mythic_progbar'
+Config.ProgressbarType = 'vorp_progressbar'
 
 -- Interaction System
-Config.InteractionType = 'none'
+Config.InteractionType = 'vorp_menu'
+
+-- Discord Webhook (optional)
+Config.DiscordWebhook.enabled = false
+
+-- Gameplay Settings
+Config.maxSmokes = 10
+Config.maxSmokePerPlayer = 3
+```
+
+---
+
+## RedEM Setup
+
+**For RedM servers using RedEM:RP framework**
+
+```lua
+-- Framework
+Config.Framework = 'redem'
+
+-- Notification System
+Config.NotifyType = 'redem_notify'  -- or 'redemrp_notification'
+
+-- HUD System
+Config.HudType = 'redem_hud'
+
+-- Progressbar System
+Config.UseProgressbar = true
+Config.ProgressbarDuration = 5000
+Config.ProgressbarType = 'redem_progressbar'
+
+-- Interaction System
+Config.InteractionType = 'redem_menu'  -- or 'warmenu'
+
+-- Discord Webhook (optional)
+Config.DiscordWebhook.enabled = false
 
 -- Gameplay Settings
 Config.maxSmokes = 10
@@ -166,23 +159,30 @@ Config.maxSmokePerPlayer = 3
 
 ## Standalone Setup
 
-**No framework required**
+**No framework required - Pure RedM**
 
 ```lua
 -- Framework
 Config.Framework = 'standalone'
 
 -- Notification System
-Config.NotifyType = 'default'
+Config.NotifyType = 'default'  -- Uses native RedM chat
 
 -- HUD System
 Config.HudType = 'none'
 
 -- Progressbar System
-Config.UseProgressbar = false
+Config.UseProgressbar = false  -- No progressbar
 
 -- Interaction System
 Config.InteractionType = 'none'
+
+-- Discord Webhook (optional but recommended for standalone)
+Config.DiscordWebhook = {
+    enabled = true,
+    webhook = 'YOUR_WEBHOOK_URL_HERE',
+    logDeploy = true,
+}
 
 -- Gameplay Settings
 Config.maxSmokes = 10
@@ -191,30 +191,117 @@ Config.maxSmokePerPlayer = 3
 
 ---
 
-## Custom Notification Systems
+## Discord Webhook Configuration
 
-### Using bln_notify
+### Full Configuration Example
+```lua
+Config.DiscordWebhook = {
+    enabled = true,                             -- Enable Discord logging
+    webhook = 'https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN',
+    botName = 'The Land of Wolves RP - Smoke Flair',
+    botAvatar = 'https://i.imgur.com/your-logo.png',  -- Optional custom avatar
+    color = 3447003,                            -- Blue (use decimal color codes)
+    logDeploy = true,                           -- Log when smoke is deployed
+    logRemove = false,                          -- Don't log when smoke expires (reduces spam)
+    includeSteamID = true,                      -- Include player Steam ID
+    includeDiscordID = true,                    -- Include Discord mention
+    includeCoordinates = true,                  -- Include deployment coordinates
+}
+```
+
+### Discord Color Codes (Decimal)
+```lua
+-- Red
+color = 15158332,  -- #E74C3C
+
+-- Green
+color = 3066993,   -- #2ECC71
+
+-- Blue
+color = 3447003,   -- #3498DB
+
+-- Yellow
+color = 16776960,  -- #FFFF00
+
+-- Orange
+color = 15105570,  -- #E67E22
+
+-- Purple
+color = 10181046,  -- #9B59B6
+
+-- The Land of Wolves (Custom)
+color = 8421504,   -- #808080 (Grey/Wolf color)
+```
+
+### How to Create Discord Webhook
+1. Open your Discord server
+2. Go to Server Settings → Integrations
+3. Click "Webhooks" → "New Webhook"
+4. Choose the channel for logs
+5. Name it "Smoke Flair Logs"
+6. Copy the webhook URL
+7. Paste it in config.lua
+
+### Example Discord Message
+When enabled, you'll see logs like this in Discord:
+```
+🎆 Smoke Flare Deployed
+JohnDoe has deployed a smoke flare
+
+Item: Big Red Smoke Flare
+Duration: 60 seconds
+Steam ID: steam:110000XXXXXXXX
+Discord: @JohnDoe
+Coordinates: X: 1234.56, Y: -567.89, Z: 123.45
+
+The Land of Wolves RP - Smoke Flair System
+Today at 12:34 PM
+```
+
+---
+
+## Custom Notification Systems (RedM)
+
+### Using bln_notify (Recommended)
 ```lua
 Config.NotifyType = 'bln_notify'
 Config.CustomNotifyResource = 'bln_notify'
 ```
+**GitHub**: https://github.com/blnStudio/bln_notify
 
-### Using ox_lib
+Features: Modern UI, multiple types, RedM-specific
+
+### Using RSG Notify
 ```lua
-Config.NotifyType = 'ox_lib'
+Config.NotifyType = 'rsg-notify'
 ```
+For RSGCore framework
 
-### Using Custom Resource
+### Using VORP Notify
+```lua
+Config.NotifyType = 'vorp_notify'
+```
+For VORP framework
+
+### Using RedEM Notify
+```lua
+Config.NotifyType = 'redem_notify'
+-- OR
+Config.NotifyType = 'redemrp_notification'
+```
+For RedEM:RP framework
+
+### Using Custom RedM Resource
 ```lua
 Config.NotifyType = 'custom'
-Config.CustomNotifyResource = 'your_custom_notify'
+Config.CustomNotifyResource = 'your_custom_redm_notify'
 ```
 
-### Using Multiple Systems (Fallback)
-If you want to try bln_notify first, then fallback to ox_lib:
-1. Set `Config.NotifyType = 'bln_notify'`
-2. Make sure bln_notify is installed
-3. If it fails, the system will use default chat notifications
+### Using Default (Native RedM Chat)
+```lua
+Config.NotifyType = 'default'
+```
+Simple chat-based notifications as fallback
 
 ---
 
