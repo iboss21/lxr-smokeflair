@@ -1,3 +1,12 @@
+--[[
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                                                                  ║
+    ║        The Land of Wolves RP - Smoke Flair Server               ║
+    ║                   www.wolves.land                                ║
+    ║                                                                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+--]]
+
 local activeSmokes = {}
 local smokeIdCounter = 0
 local playerSmokeCount = {}
@@ -34,48 +43,115 @@ local function removeActiveSmoke(smokeId)
     end
 end
 
-jo.framework:onCharacterSelected(function(source)
-    local _source = source
-    local smokes = getCurrentSmokes()
-    TriggerClientEvent('moro_smokes:syncSmokes', _source, smokes)
-end)
+function getCurrentSmokes()
+    local now = GetGameTimer()
+    local smokeList = {}
+
+    for smokeId, smoke in pairs(activeSmokes) do
+        local remainingMs = (smoke.expiresAt or 0) - now
+
+        if remainingMs <= 0 then
+            removeActiveSmoke(smokeId)
+        else
+            table.insert(smokeList, {
+                coords = smoke.coords,
+                itemData = {
+                    duration = remainingMs / 1000,
+                    scale = smoke.itemData.scale,
+                    color = smoke.itemData.color
+                }
+            })
+        end
+    end
+
+    return smokeList
+end
+
+-- ═══════════════════════════════════════════════════════════════════
+--                      FRAMEWORK INTEGRATION
+-- ═══════════════════════════════════════════════════════════════════
+
+-- Support for frameworks with character selection
+if Config.Framework ~= 'standalone' then
+    AddEventHandler('playerLoaded', function(source)
+        local smokes = getCurrentSmokes()
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
+    end)
+    
+    -- LXRCore/RSGCore/QBCore style
+    RegisterNetEvent('QBCore:Server:OnPlayerLoaded', function()
+        local source = source
+        local smokes = getCurrentSmokes()
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
+    end)
+    
+    -- ESX style
+    RegisterNetEvent('esx:playerLoaded', function(playerId)
+        local smokes = getCurrentSmokes()
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', playerId, smokes)
+    end)
+    
+    -- VORP style
+    RegisterNetEvent('vorp:SelectedCharacter', function(charid)
+        local source = source
+        local smokes = getCurrentSmokes()
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
+    end)
+end
+
+-- ═══════════════════════════════════════════════════════════════════
+--                      ITEM REGISTRATION
+-- ═══════════════════════════════════════════════════════════════════
 
 Citizen.CreateThread(function()
-    for itemName, itemData in pairs(Config.items) do
-        jo.framework:registerUseItem(itemName, true, function(source, metadata)
+    Wait(1000) -- Wait for framework to load
+    
+    for itemName, itemData in pairs(Config.Items) do
+        Utils.RegisterUsableItem(itemName, function(source, item)
             local _source = source
-            if jo.framework:canUseItem(_source, itemName, 1, nil, true) then
-                if #activeSmokes >= Config.maxSmokes then
-                    jo.notif.right(_source, Config.translations.maxSmokesReached, "hud_textures", "cross", "COLOR_RED", 5000)
-                    return
-                end
-                if getPlayerSmokeCount(_source) >= Config.maxSmokePerPlayer then
-                    jo.notif.right(_source, Config.translations.maxPlayerSmokesReached, "hud_textures", "cross", "COLOR_RED", 5000)
-                    return
-                end
-                jo.framework:removeItem(_source, itemName, 1, metadata)
-                TriggerClientEvent("moro_smokes:setSmokeObject", _source, itemName)
-                jo.notif.right(_source, Config.translations.smokeUsed, "hud_textures", "check", "COLOR_GREEN", 5000)
+            
+            if not Utils.HasItem(_source, itemName, 1) then
+                Utils.Notify(_source, Config.Translations.noSmokeItem, 'error')
+                return
+            end
+            
+            if #activeSmokes >= Config.maxSmokes then
+                Utils.Notify(_source, Config.Translations.maxSmokesReached, 'error')
+                return
+            end
+            
+            if getPlayerSmokeCount(_source) >= Config.maxSmokePerPlayer then
+                Utils.Notify(_source, Config.Translations.maxPlayerSmokesReached, 'error')
+                return
+            end
+            
+            if Utils.RemoveItem(_source, itemName, 1, item and item.metadata) then
+                TriggerClientEvent("lxr_smokeflair:setSmokeObject", _source, itemName)
+                Utils.Notify(_source, Config.Translations.smokeUsed, 'success')
             else
-                jo.notif.right(_source, Config.translations.noSmokeItem, "hud_textures", "cross", "COLOR_RED", 5000)
+                Utils.Notify(_source, Config.Translations.noSmokeItem, 'error')
             end
         end)
     end
 end)
 
-RegisterServerEvent("moro_smokes:shareSmoke")
-AddEventHandler("moro_smokes:shareSmoke", function(coords, item)
-    if not item or not Config.items[item] then
+-- ═══════════════════════════════════════════════════════════════════
+--                      SMOKE SYNCHRONIZATION
+-- ═══════════════════════════════════════════════════════════════════
+
+RegisterServerEvent("lxr_smokeflair:shareSmoke")
+AddEventHandler("lxr_smokeflair:shareSmoke", function(coords, item)
+    if not item or not Config.Items[item] then
         return
     end
 
     local _source = source
     if getPlayerSmokeCount(_source) >= Config.maxSmokePerPlayer then
-        jo.notif.right(_source, Config.translations.maxPlayerSmokesReached, "hud_textures", "cross", "COLOR_RED", 5000)
+        Utils.Notify(_source, Config.Translations.maxPlayerSmokesReached, 'error')
         return
     end
 
-    local itemData = Config.items[item]
+    local itemData = Config.Items[item]
     local syncedItemData = {
         duration = itemData.duration,
         scale = itemData.scale,
@@ -100,32 +176,12 @@ AddEventHandler("moro_smokes:shareSmoke", function(coords, item)
         removeActiveSmoke(smokeId)
     end)
 
-    TriggerClientEvent("moro_smokes:syncSmoke", -1, coords, syncedItemData)
+    TriggerClientEvent("lxr_smokeflair:syncSmoke", -1, coords, syncedItemData)
 end)
 
-function getCurrentSmokes()
-    local now = GetGameTimer()
-    local smokeList = {}
-
-    for smokeId, smoke in pairs(activeSmokes) do
-        local remainingMs = (smoke.expiresAt or 0) - now
-
-        if remainingMs <= 0 then
-            removeActiveSmoke(smokeId)
-        else
-            table.insert(smokeList, {
-                coords = smoke.coords,
-                itemData = {
-                    duration = remainingMs / 1000,
-                    scale = smoke.itemData.scale,
-                    color = smoke.itemData.color
-                }
-            })
-        end
-    end
-
-    return smokeList
-end
+-- ═══════════════════════════════════════════════════════════════════
+--                      PLAYER CLEANUP
+-- ═══════════════════════════════════════════════════════════════════
 
 AddEventHandler('playerDropped', function()
     playerSmokeCount[source] = nil
