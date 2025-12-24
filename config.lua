@@ -16,49 +16,49 @@ Config = {}
     ║                   FRAMEWORK CONFIGURATION                        ║
     ╚══════════════════════════════════════════════════════════════════╝
     
-    Primary support: LXRCore (https://github.com/lxrcore)
-    Fallback support: RSGCore, QBCore, QBX, ESX, VORP, RedEM:RP
+    Primary support: LXRCore (https://github.com/lxrcore) for RedM
+    Fallback support: RSGCore, VORP, RedEM:RP (All RedM frameworks)
 --]]
 
-Config.Framework = 'lxr-core' -- Options: 'lxr-core', 'rsg-core', 'qb-core', 'qbx', 'esx', 'vorp', 'redem', 'standalone'
+Config.Framework = 'lxr-core' -- Options: 'lxr-core', 'rsg-core', 'vorp', 'redem', 'standalone'
 
 --[[
     ╔══════════════════════════════════════════════════════════════════╗
-    ║                   NOTIFICATION SYSTEM                             ║
+    ║                   NOTIFICATION SYSTEM (RedM)                      ║
     ╚══════════════════════════════════════════════════════════════════╝
     
-    Choose your preferred notification system or use custom resource
+    RedM-specific notification systems
 --]]
 
-Config.NotifyType = 'bln_notify' -- Options: 'bln_notify', 'ox_lib', 'lxr-notify', 'rsg-notify', 'qb-notify', 'mythic_notify', 'custom', 'default'
+Config.NotifyType = 'bln_notify' -- Options: 'bln_notify', 'lxr-notify', 'rsg-notify', 'vorp_notify', 'redem_notify', 'redemrp_notification', 'custom', 'default'
 Config.CustomNotifyResource = 'bln_notify' -- If NotifyType is 'custom', specify the resource name
 
 --[[
     ╔══════════════════════════════════════════════════════════════════╗
-    ║                      HUD SYSTEM                                   ║
+    ║                      HUD SYSTEM (RedM)                            ║
     ╚══════════════════════════════════════════════════════════════════╝
 --]]
 
-Config.HudType = 'bln_hud' -- Options: 'bln_hud', 'lxr-hud', 'rsg-hud', 'qb-hud', 'esx_hud', 'custom', 'none'
+Config.HudType = 'bln_hud' -- Options: 'bln_hud', 'lxr-hud', 'rsg-hud', 'vorp_hud', 'redem_hud', 'custom', 'none'
 Config.CustomHudResource = 'bln_hud' -- If HudType is 'custom', specify the resource name
 
 --[[
     ╔══════════════════════════════════════════════════════════════════╗
-    ║                   PROGRESSBAR SYSTEM                              ║
+    ║                   PROGRESSBAR SYSTEM (RedM)                       ║
     ╚══════════════════════════════════════════════════════════════════╝
 --]]
 
-Config.ProgressbarType = 'lxr-progressbar' -- Options: 'lxr-progressbar', 'ox_lib', 'rsg-progressbar', 'qb-progressbar', 'mythic_progbar', 'custom', 'none'
+Config.ProgressbarType = 'lxr-progressbar' -- Options: 'lxr-progressbar', 'rsg-progressbar', 'vorp_progressbar', 'redem_progressbar', 'progressBars', 'custom', 'none'
 Config.CustomProgressbarResource = 'lxr-progressbar'
 
 --[[
     ╔══════════════════════════════════════════════════════════════════╗
-    ║                   INTERACTION SYSTEM                              ║
+    ║                   INTERACTION SYSTEM (RedM)                       ║
     ╚══════════════════════════════════════════════════════════════════╝
 --]]
 
-Config.InteractionType = 'co_interactions' -- Options: 'co_interactions', 'ox_target', 'qb-target', 'rp-interact', 'lxr-target', 'custom', 'none'
-Config.CustomInteractionResource = 'co_interactions'
+Config.InteractionType = 'rco' -- Options: 'rco' (RedM Context Options), 'rsg-target', 'vorp_menu', 'redem_menu', 'warmenu', 'custom', 'none'
+Config.CustomInteractionResource = 'rco'
 
 --[[
     ╔══════════════════════════════════════════════════════════════════╗
@@ -77,6 +77,25 @@ Config.Animation = {
     name = 'idle_a',
     duration = 10000, -- duration in milliseconds
     freezePlayer = true, -- Freeze player during animation
+}
+
+--[[
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                      DISCORD WEBHOOK LOGGING                      ║
+    ╚══════════════════════════════════════════════════════════════════╝
+--]]
+
+Config.DiscordWebhook = {
+    enabled = false, -- Set to true to enable Discord logging
+    webhook = '', -- Your Discord webhook URL here
+    botName = 'The Land of Wolves RP - Smoke Flair',
+    botAvatar = 'https://i.imgur.com/your-avatar.png', -- Optional: Custom avatar URL
+    color = 3447003, -- Embed color (default: blue) - Use decimal color codes
+    logDeploy = true, -- Log when smoke is deployed
+    logRemove = false, -- Log when smoke expires (can be spammy)
+    includeSteamID = true, -- Include Steam ID in logs
+    includeDiscordID = true, -- Include Discord ID in logs
+    includeCoordinates = true, -- Include coordinates in logs
 }
 
 --[[

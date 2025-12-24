@@ -44,14 +44,15 @@ Designed specifically for The Land of Wolves RP with primary support for [LXRCor
 
 ### Framework Integration
 - 🚀 **Primary Support: LXRCore** - Built and optimized for [LXRCore Framework](https://github.com/lxrcore)
-- 🔌 **Multi-Framework Compatible** - RSGCore, QBCore, QBX, ESX, VORP, RedEM:RP, or Standalone
+- 🔌 **Multi-Framework Compatible** - RSGCore, VORP, RedEM:RP, or Standalone
 - 🔄 **Easy Framework Switching** - Change framework with a single config option
 
 ### Advanced Systems
-- 📢 **Multiple Notification Systems** - bln_notify, ox_lib, lxr-notify, rsg-notify, qb-notify, mythic_notify, or custom
-- 📊 **Multiple HUD Systems** - bln_hud, lxr-hud, rsg-hud, qb-hud, esx_hud, or custom
-- ⏳ **Multiple Progressbar Systems** - lxr-progressbar, ox_lib, rsg-progressbar, qb-progressbar, mythic_progbar, or custom
-- 🎯 **Multiple Interaction Systems** - co_interactions, ox_target, qb-target, rp-interact, lxr-target, or custom
+- 📢 **Multiple Notification Systems** - bln_notify, lxr-notify, rsg-notify, vorp_notify, redem_notify, or custom (RedM-specific)
+- 📊 **Multiple HUD Systems** - bln_hud, lxr-hud, rsg-hud, vorp_hud, redem_hud, or custom (RedM-specific)
+- ⏳ **Multiple Progressbar Systems** - lxr-progressbar, rsg-progressbar, vorp_progressbar, redem_progressbar, or custom (RedM-specific)
+- 🎯 **Multiple Interaction Systems** - RCO (RedM Context Options), rsg-target, vorp_menu, redem_menu, warmenu, or custom (RedM-specific)
+- 📝 **Discord Webhook Logging** - Optional Discord logging for smoke deployments with player info and coordinates
 
 ### Gameplay Features
 - 🎮 **Progressbar Support** - Optional progressbar when deploying smoke flares
@@ -59,6 +60,7 @@ Designed specifically for The Land of Wolves RP with primary support for [LXRCor
 - 🔄 **Auto-Sync** - New players automatically see existing smoke flares
 - 🧹 **Clean Resource Stop** - Automatic cleanup when resource stops
 - 🎨 **Custom Models** - Use any prop model for the smoke flare object
+- 📊 **Activity Tracking** - Discord webhook integration for server logs
 
 ---
 
@@ -70,14 +72,15 @@ Designed specifically for The Land of Wolves RP with primary support for [LXRCor
 
 ### Framework Requirements (Choose One)
 - **LXRCore** (Recommended) - https://github.com/lxrcore
-- RSGCore, QBCore, QBX, ESX, VORP, RedEM:RP
+- RSGCore, VORP, RedEM:RP (All RedM frameworks)
 - Or run in Standalone mode
 
 ### Optional (Enhances Functionality)
-- **Notification System**: bln_notify (recommended), ox_lib, or others
-- **HUD System**: bln_hud (recommended) or others
-- **Progressbar System**: lxr-progressbar (recommended), ox_lib, or others
-- **Interaction System**: co_interactions (recommended), ox_target, or others
+- **Notification System**: bln_notify (recommended), rsg-notify, vorp_notify, or others (RedM-specific)
+- **HUD System**: bln_hud (recommended), rsg-hud, vorp_hud, or others (RedM-specific)
+- **Progressbar System**: lxr-progressbar (recommended), rsg-progressbar, vorp_progressbar, or others (RedM-specific)
+- **Interaction System**: RCO - RedM Context Options (recommended), rsg-target, vorp_menu, or others (RedM-specific)
+- **Discord Webhook**: For logging smoke deployments (optional)
 
 ---
 
@@ -97,7 +100,7 @@ ensure lxr-smokeflair
 ### Step 3: Configure Framework
 Open `config.lua` and set your framework:
 ```lua
-Config.Framework = 'lxr-core' -- Options: 'lxr-core', 'rsg-core', 'qb-core', 'qbx', 'esx', 'vorp', 'redem', 'standalone'
+Config.Framework = 'lxr-core' -- Options: 'lxr-core', 'rsg-core', 'vorp', 'redem', 'standalone'
 ```
 
 ### Step 4: Configure Systems (Optional)
@@ -106,19 +109,34 @@ Configure your preferred systems in `config.lua`:
 Config.NotifyType = 'bln_notify'
 Config.HudType = 'bln_hud'
 Config.ProgressbarType = 'lxr-progressbar'
-Config.InteractionType = 'co_interactions'
+Config.InteractionType = 'rco' -- RedM Context Options
 ```
 
-### Step 5: Add Items to Database
+### Step 5: Configure Discord Webhook (Optional)
+To enable Discord logging, edit `config.lua`:
+```lua
+Config.DiscordWebhook = {
+    enabled = true,
+    webhook = 'YOUR_DISCORD_WEBHOOK_URL_HERE',
+    botName = 'The Land of Wolves RP - Smoke Flair',
+    color = 3447003,
+    logDeploy = true,
+    includeSteamID = true,
+    includeDiscordID = true,
+    includeCoordinates = true,
+}
+```
+
+### Step 6: Add Items to Database
 See [Item Database](#-item-database) section below for SQL queries
 
-### Step 6: Add Item Icons (Optional)
+### Step 7: Add Item Icons (Optional)
 Copy the provided icons to your inventory system:
 - `big_smoke.png` - Use for big smoke flares
 - `small_smoke.png` - Use for small smoke flares
 - Or create your own custom icons!
 
-### Step 7: Restart Server
+### Step 8: Restart Server
 ```
 restart lxr-smokeflair
 ```
@@ -131,25 +149,75 @@ restart lxr-smokeflair
 ```lua
 Config.Framework = 'lxr-core'
 ```
-**Options**: `lxr-core`, `rsg-core`, `qb-core`, `qbx`, `esx`, `vorp`, `redem`, `standalone`
+**Options (RedM only)**: `lxr-core`, `rsg-core`, `vorp`, `redem`, `standalone`
 
 ### Notification System
 ```lua
 Config.NotifyType = 'bln_notify'
 Config.CustomNotifyResource = 'bln_notify' -- For custom notifications
 ```
-**Options**: `bln_notify`, `ox_lib`, `lxr-notify`, `rsg-notify`, `qb-notify`, `mythic_notify`, `custom`, `default`
+**Options (RedM only)**: `bln_notify`, `lxr-notify`, `rsg-notify`, `vorp_notify`, `redem_notify`, `redemrp_notification`, `custom`, `default`
+
+**Recommended**: `bln_notify` - https://github.com/blnStudio/bln_notify
 
 ### HUD System
 ```lua
 Config.HudType = 'bln_hud'
 Config.CustomHudResource = 'bln_hud'
 ```
-**Options**: `bln_hud`, `lxr-hud`, `rsg-hud`, `qb-hud`, `esx_hud`, `custom`, `none`
+**Options (RedM only)**: `bln_hud`, `lxr-hud`, `rsg-hud`, `vorp_hud`, `redem_hud`, `custom`, `none`
 
 ### Progressbar System
 ```lua
 Config.UseProgressbar = true
+Config.ProgressbarDuration = 5000 -- 5 seconds
+Config.ProgressbarType = 'lxr-progressbar'
+```
+**Options (RedM only)**: `lxr-progressbar`, `rsg-progressbar`, `vorp_progressbar`, `redem_progressbar`, `progressBars`, `custom`, `none`
+
+### Interaction System
+```lua
+Config.InteractionType = 'rco' -- RedM Context Options
+Config.CustomInteractionResource = 'rco'
+```
+**Options (RedM only)**: `rco`, `rsg-target`, `vorp_menu`, `redem_menu`, `warmenu`, `custom`, `none`
+
+**Important**: Use `rco` (RedM Context Options) NOT "co_interactions" (which is for GTA5/FiveM)
+
+### Discord Webhook Logging
+```lua
+Config.DiscordWebhook = {
+    enabled = false,                    -- Set to true to enable
+    webhook = '',                       -- Your Discord webhook URL
+    botName = 'The Land of Wolves RP - Smoke Flair',
+    botAvatar = '',                     -- Optional avatar URL
+    color = 3447003,                    -- Embed color (decimal)
+    logDeploy = true,                   -- Log deployments
+    logRemove = false,                  -- Log when smoke expires
+    includeSteamID = true,              -- Include Steam ID
+    includeDiscordID = true,            -- Include Discord mention
+    includeCoordinates = true,          -- Include coordinates
+}
+```
+
+**How to get Discord Webhook:**
+1. Go to your Discord server settings
+2. Select "Integrations" → "Webhooks"
+3. Click "New Webhook"
+4. Copy the webhook URL
+5. Paste it in the config
+
+**Example Discord Log:**
+```
+🎆 Smoke Flare Deployed
+Player: JohnDoe has deployed a smoke flare
+
+Item: Big Red Smoke Flare
+Duration: 60 seconds
+Steam ID: steam:110000XXXXXXXX
+Discord: @JohnDoe
+Coordinates: X: 1234.56, Y: -567.89, Z: 123.45
+```
 Config.ProgressbarDuration = 5000 -- 5 seconds
 Config.ProgressbarType = 'lxr-progressbar'
 ```
@@ -209,7 +277,7 @@ Config.Translations = {
 ```lua
 Config.Framework = 'lxr-core'
 ```
-Full integration with LXRCore including:
+Full integration with LXRCore for RedM including:
 - Character selection synchronization
 - Inventory management
 - Item registration
@@ -219,31 +287,19 @@ Full integration with LXRCore including:
 ```lua
 Config.Framework = 'rsg-core'
 ```
-Complete compatibility with RSGCore
-
-### QBCore / QBX
-```lua
-Config.Framework = 'qb-core'  -- or 'qbx'
-```
-Full QBCore and QBX framework support
-
-### ESX
-```lua
-Config.Framework = 'esx'
-```
-Full ESX framework support
+Complete compatibility with RSGCore for RedM
 
 ### VORP
 ```lua
 Config.Framework = 'vorp'
 ```
-Complete VORP framework integration
+Complete VORP framework integration for RedM
 
 ### RedEM:RP
 ```lua
 Config.Framework = 'redem'
 ```
-Full RedEM:RP framework support
+Full RedEM:RP framework support for RedM
 
 ### Standalone
 ```lua
@@ -253,73 +309,97 @@ Run without any framework dependency
 
 ---
 
-## 📢 Notification Systems
+## 📢 Notification Systems (RedM)
 
 ### bln_notify (Recommended)
 ```lua
 Config.NotifyType = 'bln_notify'
 ```
-Beautiful, modern notifications with customizable styles
+**Beautiful, modern notifications with customizable styles for RedM**
 
-### ox_lib
-```lua
-Config.NotifyType = 'ox_lib'
-```
-Clean and simple ox_lib notifications
+Repository: https://github.com/blnStudio/bln_notify
 
-### LXR/RSG/QB Notifications
+Features:
+- Clean and modern UI
+- Multiple notification types (success, error, info, warning)
+- Customizable duration
+- RedM-specific design
+- Easy integration
+
+Installation:
+1. Download from: https://github.com/blnStudio/bln_notify
+2. Add to your resources folder
+3. Add `ensure bln_notify` to server.cfg
+4. Set `Config.NotifyType = 'bln_notify'` in config.lua
+
+### LXR/RSG Notifications
 ```lua
-Config.NotifyType = 'lxr-notify'  -- or 'rsg-notify', 'qb-notify'
+Config.NotifyType = 'lxr-notify'  -- or 'rsg-notify'
 ```
-Framework-specific notification systems
+Framework-specific notification systems for RedM
+
+### VORP Notifications
+```lua
+Config.NotifyType = 'vorp_notify'
+```
+VORP framework notification system for RedM
+
+### RedEM Notifications
+```lua
+Config.NotifyType = 'redem_notify'  -- or 'redemrp_notification'
+```
+RedEM framework notification systems for RedM
 
 ### Custom Notification System
 ```lua
 Config.NotifyType = 'custom'
 Config.CustomNotifyResource = 'your_notify_resource'
 ```
-Use any custom notification resource
+Use any custom notification resource for RedM
 
 ### Default (Chat-based)
 ```lua
 Config.NotifyType = 'default'
 ```
-Simple chat-based notifications as fallback
+Simple chat-based notifications as fallback (native RedM)
 
 ---
 
-## 📊 HUD & Progressbar Systems
+## 📊 HUD & Progressbar Systems (RedM)
 
 ### Supported HUD Systems
-- **bln_hud** (Recommended) - Modern, customizable HUD
-- **lxr-hud** - LXRCore HUD system
-- **rsg-hud** - RSGCore HUD system
-- **qb-hud** - QBCore HUD system
-- **esx_hud** - ESX HUD system
+- **bln_hud** (Recommended) - Modern, customizable HUD for RedM
+- **lxr-hud** - LXRCore HUD system for RedM
+- **rsg-hud** - RSGCore HUD system for RedM
+- **vorp_hud** - VORP HUD system for RedM
+- **redem_hud** - RedEM HUD system for RedM
 - **custom** - Your own HUD resource
 - **none** - Disable HUD integration
 
 ### Supported Progressbar Systems
-- **lxr-progressbar** (Recommended) - LXRCore progressbar
-- **ox_lib** - ox_lib progress circles
-- **rsg-progressbar** - RSGCore progressbar
-- **qb-progressbar** - QBCore progressbar
-- **mythic_progbar** - Mythic progressbar
+- **lxr-progressbar** (Recommended) - LXRCore progressbar for RedM
+- **rsg-progressbar** - RSGCore progressbar for RedM
+- **vorp_progressbar** - VORP progressbar for RedM
+- **redem_progressbar** - RedEM progressbar for RedM
+- **progressBars** - Generic RedM progressbar
 - **custom** - Your own progressbar resource
 - **none** - Disable progressbar (instant deployment)
 
 ---
 
-## 🎯 Interaction Systems
+## 🎯 Interaction Systems (RedM)
 
 ### Supported Interaction Systems
-- **co_interactions** (Recommended) - Context-based interactions
-- **ox_target** - ox_target targeting system
-- **qb-target** - QBCore target system
-- **rp-interact** - RP interaction system
-- **lxr-target** - LXRCore target system
+- **rco** (Recommended) - RedM Context Options (RCO) - Native RedM interaction system
+- **rsg-target** - RSGCore target system for RedM
+- **vorp_menu** - VORP menu system for RedM
+- **redem_menu** - RedEM menu system for RedM
+- **warmenu** - Generic RedM menu system
 - **custom** - Your own interaction resource
 - **none** - No interaction system integration
+
+### Important Note
+**RCO (RedM Context Options)** is the recommended interaction system for RedM. It's NOT "co_interactions" (which is for GTA5/FiveM). Make sure you're using RedM-specific resources.
 
 ---
 

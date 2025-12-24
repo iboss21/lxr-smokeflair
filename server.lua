@@ -78,21 +78,28 @@ if Config.Framework ~= 'standalone' then
         TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
     end)
     
-    -- LXRCore/RSGCore/QBCore style
+    -- LXRCore/RSGCore style
     RegisterNetEvent('QBCore:Server:OnPlayerLoaded', function()
         local source = source
         local smokes = getCurrentSmokes()
         TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
     end)
     
-    -- ESX style
-    RegisterNetEvent('esx:playerLoaded', function(playerId)
+    RegisterNetEvent('RSGCore:Server:OnPlayerLoaded', function()
+        local source = source
         local smokes = getCurrentSmokes()
-        TriggerClientEvent('lxr_smokeflair:syncSmokes', playerId, smokes)
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
     end)
     
     -- VORP style
     RegisterNetEvent('vorp:SelectedCharacter', function(charid)
+        local source = source
+        local smokes = getCurrentSmokes()
+        TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
+    end)
+    
+    -- RedEM style
+    RegisterNetEvent('redemrp_respawn:playerFullySpawned', function()
         local source = source
         local smokes = getCurrentSmokes()
         TriggerClientEvent('lxr_smokeflair:syncSmokes', source, smokes)
@@ -177,6 +184,9 @@ AddEventHandler("lxr_smokeflair:shareSmoke", function(coords, item)
     end)
 
     TriggerClientEvent("lxr_smokeflair:syncSmoke", -1, coords, syncedItemData)
+    
+    -- Log to Discord
+    Utils.LogSmokeDeployment(_source, item, itemData, coordsData)
 end)
 
 -- ═══════════════════════════════════════════════════════════════════
