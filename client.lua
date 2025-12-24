@@ -1,13 +1,39 @@
+--[[
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║                                                                  ║
+    ║        The Land of Wolves RP - Smoke Flair Client               ║
+    ║                   www.wolves.land                                ║
+    ║                                                                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+--]]
+
 local smokers = {}
 local smokes = {}
 
-RegisterNetEvent('moro_smokes:setSmokeObject')
-AddEventHandler('moro_smokes:setSmokeObject', function(item)
+RegisterNetEvent('lxr_smokeflair:setSmokeObject')
+AddEventHandler('lxr_smokeflair:setSmokeObject', function(item)
     local playerPed = PlayerPedId()
+    local itemConfig = Config.Items[item]
+    
+    if not itemConfig then
+        Utils.Notify(nil, Config.Translations.noSmokeItem, 'error')
+        return
+    end
+    
+    -- Show progressbar if enabled
+    if Config.UseProgressbar then
+        Utils.Notify(nil, Config.Translations.smokeDeploying, 'info', 3000)
+        local success = Utils.Progressbar(Config.Translations.smokeDeploying, Config.ProgressbarDuration)
+        if not success then
+            Utils.Notify(nil, Config.Translations.cancelled, 'error')
+            return
+        end
+    end
+    
     local function playAnim()
-        local dict = Config.animation.dict
-        local name = Config.animation.name
-        local duration = Config.animation.duration
+        local dict = Config.Animation.dict
+        local name = Config.Animation.name
+        local duration = Config.Animation.duration
         RequestAnimDict(dict)
         while not HasAnimDictLoaded(dict) do
             Wait(10)
@@ -15,34 +41,43 @@ AddEventHandler('moro_smokes:setSmokeObject', function(item)
         TaskPlayAnim(PlayerPedId(), dict, name, 1.0, 1.0, duration, 1, 1.0, false, false, false)
         RemoveAnimDict(dict)
     end
-    local coords = GetOffsetFromEntityInWorldCoords(playerPed, Config.items[item].offset.x, Config.items[item].offset.y, Config.items[item].offset.z)
+    
+    local coords = GetOffsetFromEntityInWorldCoords(playerPed, itemConfig.offset.x, itemConfig.offset.y, itemConfig.offset.z)
 
-    FreezeEntityPosition(playerPed, true)
+    if Config.Animation.freezePlayer then
+        FreezeEntityPosition(playerPed, true)
+    end
+    
     playAnim()
-    Wait(Config.animation.duration * 0.4)
-    local smoker = CreateObjectNoOffset(Config.items[item].model, coords, true, false, true)
+    Wait(Config.Animation.duration * 0.4)
+    
+    local smoker = CreateObjectNoOffset(itemConfig.model, coords, true, false, true)
     PlaceObjectOnGroundProperly(smoker)
     SetEntityHeading(smoker, GetEntityHeading(playerPed))
     SetEntityInvincible(smoker, true)
-    SetEntityRotation(smoker, Config.items[item].rotation.x, Config.items[item].rotation.y, Config.items[item].rotation.z, 2)
+    SetEntityRotation(smoker, itemConfig.rotation.x, itemConfig.rotation.y, itemConfig.rotation.z, 2)
     SetEntityCollision(smoker, false, true)
     SetEntityVisible(smoker, true)
     FreezeEntityPosition(smoker, true)
     local index = #smokers + 1
     smokers[index] = smoker
-    Wait(Config.animation.duration * 0.35)
+    
+    Wait(Config.Animation.duration * 0.35)
     ClearPedTasks(playerPed)
-    FreezeEntityPosition(playerPed, false)
+    
+    if Config.Animation.freezePlayer then
+        FreezeEntityPosition(playerPed, false)
+    end
 
-    TriggerServerEvent("moro_smokes:shareSmoke", GetEntityCoords(smoker), item)
+    TriggerServerEvent("lxr_smokeflair:shareSmoke", GetEntityCoords(smoker), item)
 
-    Wait(Config.items[item].duration * 1000 + 1000)
+    Wait(itemConfig.duration * 1000 + 1000)
     DeleteObject(smoker)
     smokers[index] = nil
 end)
 
-RegisterNetEvent('moro_smokes:syncSmoke')
-AddEventHandler('moro_smokes:syncSmoke', function(coords, itemData)
+RegisterNetEvent('lxr_smokeflair:syncSmoke')
+AddEventHandler('lxr_smokeflair:syncSmoke', function(coords, itemData)
     RequestNamedPtfxAsset(`SCR_ADV_SOK`)
     while not HasNamedPtfxAssetLoaded(`SCR_ADV_SOK`) do
         Wait(20)
@@ -74,10 +109,10 @@ AddEventHandler('moro_smokes:syncSmoke', function(coords, itemData)
     smokes[index] = nil
 end)
 
-RegisterNetEvent('moro_smokes:syncSmokes')
-AddEventHandler('moro_smokes:syncSmokes', function(allSmokes)
+RegisterNetEvent('lxr_smokeflair:syncSmokes')
+AddEventHandler('lxr_smokeflair:syncSmokes', function(allSmokes)
     for i, smokeData in pairs(allSmokes) do
-        TriggerEvent('moro_smokes:syncSmoke', smokeData.coords, smokeData.itemData)
+        TriggerEvent('lxr_smokeflair:syncSmoke', smokeData.coords, smokeData.itemData)
         Wait(500)
     end
 end)
